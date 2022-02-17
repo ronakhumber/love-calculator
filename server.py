@@ -3,8 +3,10 @@ import json
 from pydantic import BaseModel, Field
 from fastapi import Body, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost",
@@ -24,6 +26,9 @@ app.add_middleware(
 class Names(BaseModel):
     mname:str
     fname:str
+@app.get("/")
+async def read_index():
+    return FileResponse('static/index.html')
 
 @app.post("/")
 async def root(item: Names):
