@@ -1,15 +1,19 @@
-from fastapi import FastAPI
 import requests
 import json
+from pydantic import BaseModel, Field
+from fastapi import Body, FastAPI
 
 app = FastAPI()
 
+class Names(BaseModel):
+    mname:str
+    fname:str
 
 @app.post("/")
-async def root():
+async def root(item: Names):
     url = "https://love-calculator.p.rapidapi.com/getPercentage"
 
-    querystring = {"sname":"Alice","fname":"John"}
+    querystring = {"sname":item.mname,"fname":item.fname}
 
     headers = {
         'x-rapidapi-host': "love-calculator.p.rapidapi.com",
@@ -17,5 +21,5 @@ async def root():
         }
 
     response = requests.request("GET", url, headers=headers, params=querystring)
-
+    # return item;
     return json.loads(response.text)
